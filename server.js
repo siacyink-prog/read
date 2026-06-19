@@ -25,12 +25,9 @@ app.use(
 );
 
 // 先服务前端静态文件（登录页、阅读页、css/js）。
-// 必须放在 routes 之前：routes 里有 requireAuth 这种无路径中间件，
-// 否则未登录访问 "/" 会被拦成 401，而不是看到登录页。
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(routes);
 
-// claude.ai connector（MCP）。懒加载：没装 SDK 或没配 token 也不影响网页 App。
+// MCP 要在 routes 之前挂载，否则会被 routes 里的 requireAuth 拦截。
 if (config.mcp.enabled) {
   try {
     const { mountMcp } = await import('./src/mcp.js');
@@ -40,6 +37,9 @@ if (config.mcp.enabled) {
     console.warn('⚠️  MCP 未能挂载（是否已 npm install @modelcontextprotocol/sdk？）：', e.message);
   }
 }
+
+// 再是受保护的 API routes（requireAuth 中间件在这里）
+app.use(routes);
 
 app.listen(config.port, () => {
   console.log(`📖 共读系统已启动： http://localhost:${config.port}`);
