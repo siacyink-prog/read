@@ -158,8 +158,12 @@ function buildServer() {
 // 挂载到现有 Express app 上。URL 形如 /mcp/<token>
 export async function mountMcp(app) {
   const handler = async (req, res) => {
+    // token 不对就当作「这里什么都没有」返回 404。
+    // 注意：绝对不要返回 401/403——那会让 claude.ai 以为需要 OAuth，
+    // 从而触发它的 sign-in/注册流程并失败。404 让带正确 token 的地址
+    // 走 authless（无鉴权）直连。
     if (req.params.token !== config.mcp.token) {
-      res.status(403).json({ error: 'forbidden' });
+      res.status(404).json({ error: 'not found' });
       return;
     }
     const server = buildServer();
