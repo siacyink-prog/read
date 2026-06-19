@@ -1,0 +1,17 @@
+node_modules/
+.env
+*.log
+npm-debug.log*
+
+# 运行时数据：书、批注、聊天记录、上传的原文件都不进 git
+data/books/
+data/annotations/
+data/chats/
+data/uploads/
+!data/books/.gitkeep
+!data/annotations/.gitkeep
+!data/chats/.gitkeep
+!data/uploads/.gitkeep
+
+.DS_Store
+Thumbs.db

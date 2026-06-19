@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>阅读</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="reader-top">
+    <button class="back" id="back" title="回书架">‹</button>
+    <button class="toc-btn" id="tocBtn">目录</button>
+    <div class="ch-title" id="chTitle">加载中…</div>
+  </div>
+
+  <div class="page-wrap">
+    <div class="page-text" id="pageText"></div>
+    <div class="pager">
+      <button id="prev">上一页</button>
+      <span id="pageInfo"></span>
+      <button id="next">下一页</button>
+    </div>
+  </div>
+
+  <!-- 选中浮动条 -->
+  <div id="selbar">
+    <button data-act="highlight">划线</button>
+    <button data-act="note">写想法</button>
+  </div>
+
+  <!-- 写想法弹窗 -->
+  <div id="note-modal">
+    <div class="box">
+      <div class="anchor-q" id="noteAnchor"></div>
+      <textarea id="noteText" placeholder="写点什么…"></textarea>
+      <div class="row">
+        <button class="cancel" id="noteCancel">取消</button>
+        <button class="ok" id="noteOk">留下</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 目录抽屉 -->
+  <div id="toc-drawer">
+    <div class="panel">
+      <h3 id="tocBookTitle"></h3>
+      <div id="tocList"></div>
+    </div>
+  </div>
+
+  <!-- 聊天 -->
+  <button class="chat-toggle" id="chatToggle">💬</button>
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-head">
+      <div class="t">边读边聊</div>
+      <button class="x" id="chatClose">×</button>
+    </div>
+    <div class="reading-hint" id="readingHint"></div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="chat-foot">
+      <textarea id="chatInput" placeholder="说点什么…"></textarea>
+      <button id="chatSend">发</button>
+    </div>
+  </div>
+
+  <script src="/js/reader.js"></script>
+</body>
+</html>
