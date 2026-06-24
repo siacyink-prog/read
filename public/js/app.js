@@ -92,6 +92,9 @@ $('#fileInput').onchange = async (e) => {
   e.target.value = '';
 };
 
+// 历史数据旧名字兼容
+const displayName = (n) => (n === '渡' ? '凝' : (n || '凝'));
+
 // ---------- 划线索引 ----------
 $('#ann-index-btn').onclick = async () => {
   const drawer = $('#ann-index-drawer');
@@ -123,7 +126,7 @@ $('#ann-index-btn').onclick = async () => {
           item.innerHTML = `
             ${a.anchor ? `<div class="ann-idx-anchor">"${esc(a.anchor)}"</div>` : ''}
             ${a.text ? `<div class="ann-idx-note">${esc(a.text)}</div>` : ''}
-            <div class="ann-idx-loc">${esc(a.authorName)} · 第${a.chapterIndex + 1}章 第${a.pageIndex + 1}页</div>`;
+            <div class="ann-idx-loc">${esc(displayName(a.authorName))} · 第${a.chapterIndex + 1}章 第${a.pageIndex + 1}页</div>`;
           item.onclick = () => {
             drawer.classList.remove('show');
             location.href = `/reader.html?book=${b.bookId}&chapter=${a.chapterIndex}&page=${a.pageIndex}`;

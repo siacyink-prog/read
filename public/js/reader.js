@@ -7,6 +7,8 @@ const api = async (url, opts = {}) => {
   return data;
 };
 const esc = (s) => String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// 历史数据里可能存了旧名字，统一展示为新名字
+const displayName = (n) => (n === '渡' ? '凝' : (n || '凝'));
 
 const bookId = new URLSearchParams(location.search).get('book');
 let me = null;
@@ -140,7 +142,7 @@ function handleSelection() {
   selection.text = text;
   const rect = sel.getRangeAt(0).getBoundingClientRect();
   bar.style.left = `${window.scrollX + rect.left + rect.width / 2 - 60}px`;
-  bar.style.top = `${window.scrollY + rect.top - 46}px`;
+  bar.style.top = `${window.scrollY + rect.bottom + 8}px`;
   bar.classList.add('show');
 }
 document.addEventListener('mouseup', () => setTimeout(handleSelection, 10));
@@ -201,7 +203,7 @@ function showPopover(el, annId) {
   pop.className = `popover ${a.color}`;
   const tag = a.source === 'ai' ? ' (AI批注)' : '';
   pop.innerHTML = `
-    <div class="who">${esc(a.authorName)}${tag}</div>
+    <div class="who">${esc(displayName(a.authorName))}${tag}</div>
     ${a.anchor ? `<div class="anchor">${esc(a.anchor)}</div>` : ''}
     <div class="body">${a.text ? esc(a.text) : '<i style="color:#9a948c">只是划了线</i>'}</div>
     <button class="del-ann">删掉</button>`;
@@ -233,7 +235,7 @@ function renderMsg(m) {
   // 栖（我）= 蓝色靠右；渡 = 粉色靠左
   const cls = m.authorId === me.id ? 'me' : 'them';
   div.className = `msg ${cls}`;
-  div.innerHTML = `<div class="name">${esc(m.authorName || '凝')}</div>${esc(m.text)}`;
+  div.innerHTML = `<div class="name">${esc(displayName(m.authorName))}</div>${esc(m.text)}`;
   body.appendChild(div);
   body.scrollTop = body.scrollHeight;
   return div;
