@@ -10,12 +10,12 @@ export const config = {
   port: Number(process.env.PORT) || 3000,
   sessionSecret: process.env.SESSION_SECRET || 'dev-secret-change-me',
 
-  // 数据目录
-  dataDir: path.join(ROOT, 'data'),
-  booksDir: path.join(ROOT, 'data', 'books'),
-  annotationsDir: path.join(ROOT, 'data', 'annotations'),
-  chatsDir: path.join(ROOT, 'data', 'chats'),
-  uploadsDir: path.join(ROOT, 'data', 'uploads'),
+  // 数据目录：优先读 DATA_DIR 环境变量，方便 VPS 把数据放到 git 仓库外面
+  dataDir: process.env.DATA_DIR || path.join(ROOT, 'data'),
+  booksDir: path.join(process.env.DATA_DIR || path.join(ROOT, 'data'), 'books'),
+  annotationsDir: path.join(process.env.DATA_DIR || path.join(ROOT, 'data'), 'annotations'),
+  chatsDir: path.join(process.env.DATA_DIR || path.join(ROOT, 'data'), 'chats'),
+  uploadsDir: path.join(process.env.DATA_DIR || path.join(ROOT, 'data'), 'uploads'),
 
   // 两个身份：栖 = 真人（登录，蓝色气泡）；凝 = AI 伙伴（不登录，粉色气泡）。
   // id 用来区分气泡颜色归属。role 决定能不能登录。
