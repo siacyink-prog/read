@@ -92,4 +92,58 @@ $('#fileInput').onchange = async (e) => {
   e.target.value = '';
 };
 
+// ---------- 划线索引 ----------
+$('#ann-index-btn').onclick = async () => {
+  const drawer = $('#ann-index-drawer');
+  const content = $('#annIndexContent');
+  content.innerHTML = '<div class="ann-index-empty">加载中…</div>';
+  drawer.classList.add('show');
+  try {
+    const { books } = await api('/api/annotations/all');
+    content.innerHTML = '';
+    if (!books || books.length === 0) {
+      content.innerHTML = '<div class="ann-index-empty">还没有任何划线</div>';
+      return;
+    }
+    books.forEach((b) => {
+      const humanAnns = b.annotations.filter((a) => a.source !== 'ai');
+      const aiAnns = b.annotations.filter((a) => a.source === 'ai');
+
+      const section = document.createElement('div');
+      section.className = 'ai-book-section';
+      section.innerHTML = `<div class="ai-book-title">《${esc(b.bookTitle)}》</div>`;
+
+      function renderGroup(anns, label, groupClass) {
+        if (!anns.length) return;
+        const g = document.createElement('div');
+        g.innerHTML = `<div class="ai-group-title ${groupClass}">${label}</div>`;
+        anns.forEach((a) => {
+          const item = document.createElement('div');
+          item.className = `ann-idx-item ${groupClass === 'human' ? 'human-item' : 'ai-item'}`;
+          item.innerHTML = `
+            ${a.anchor ? `<div class="ann-idx-anchor">"${esc(a.anchor)}"</div>` : ''}
+            ${a.text ? `<div class="ann-idx-note">${esc(a.text)}</div>` : ''}
+            <div class="ann-idx-loc">${esc(a.authorName)} · 第${a.chapterIndex + 1}章 第${a.pageIndex + 1}页</div>`;
+          item.onclick = () => {
+            drawer.classList.remove('show');
+            location.href = `/reader.html?book=${b.bookId}&chapter=${a.chapterIndex}&page=${a.pageIndex}`;
+          };
+          g.appendChild(item);
+        });
+        section.appendChild(g);
+      }
+
+      renderGroup(humanAnns, '人类', 'human');
+      renderGroup(aiAnns, 'AI', 'ai');
+      content.appendChild(section);
+    });
+  } catch (e) {
+    content.innerHTML = `<div class="ann-index-empty">加载失败：${esc(e.message)}</div>`;
+  }
+};
+
+$('#ann-index-drawer').onclick = (e) => {
+  if (e.target.id === 'ann-index-drawer') $('#ann-index-drawer').classList.remove('show');
+};
+
 init();

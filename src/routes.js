@@ -6,7 +6,7 @@ import {
   importBook, listBooks, getToc, getPage, deleteBook,
 } from './books.js';
 import {
-  getChapterAnnotations, addAnnotation, deleteAnnotation,
+  getChapterAnnotations, addAnnotation, deleteAnnotation, getAllAnnotations,
 } from './annotations.js';
 import { sendMessage, getHistory, clearHistory } from './chat.js';
 
@@ -89,6 +89,17 @@ router.delete('/api/books/:id/annotations/:annId', (req, res) => {
   const ch = Number(req.query.chapter) || 0;
   const ok = deleteAnnotation(req.params.id, ch, req.params.annId);
   res.json({ ok });
+});
+
+// 全书划线索引：聚合所有书的批注，前端做分组展示
+router.get('/api/annotations/all', (req, res) => {
+  const books = listBooks();
+  const result = books.map((b) => {
+    const chapters = getAllAnnotations(b.id);
+    const anns = Object.values(chapters).flat();
+    return { bookId: b.id, bookTitle: b.title, annotations: anns };
+  }).filter((b) => b.annotations.length > 0);
+  res.json({ books: result });
 });
 
 // ---------- 聊天（统一管道，bookId 可为 general） ----------

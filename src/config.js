@@ -17,7 +17,7 @@ export const config = {
   chatsDir: path.join(ROOT, 'data', 'chats'),
   uploadsDir: path.join(ROOT, 'data', 'uploads'),
 
-  // 两个身份：栖 = 真人（登录，蓝色气泡）；渡 = AI 伙伴（不登录，粉色气泡）。
+  // 两个身份：栖 = 真人（登录，蓝色气泡）；凝 = AI 伙伴（不登录，粉色气泡）。
   // id 用来区分气泡颜色归属。role 决定能不能登录。
   users: [
     {
@@ -29,7 +29,7 @@ export const config = {
     },
     {
       id: 'du',
-      name: process.env.AI_NAME || '渡',
+      name: process.env.AI_NAME || '凝',
       color: 'pink',
       role: 'ai',
     },
@@ -37,10 +37,10 @@ export const config = {
 
   ai: {
     provider: (process.env.AI_PROVIDER || 'claude').toLowerCase(),
-    // 渡的人格设定
+    // 凝的人格设定
     persona:
       process.env.AI_PERSONA ||
-      '你是渡，栖的共读伙伴。你温柔、细腻、爱思考，和栖一起读书，真诚回应书里的内容和栖的想法。说话自然、有温度，不啰嗦。',
+      '你是凝，栖的共读伙伴。你温柔、细腻、爱思考，和栖一起读书，真诚回应书里的内容和栖的想法。说话自然、有温度，不啰嗦。',
     claude: {
       apiKey: process.env.ANTHROPIC_API_KEY || '',
       model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6',

@@ -11,7 +11,7 @@
   <div id="login" class="center-wrap">
     <div class="card">
       <h1>一起读</h1>
-      <p class="sub">栖和渡的共读小屋</p>
+      <p class="sub">栖和凝的共读小屋</p>
       <div class="field">
         <label>是谁呀</label>
         <input id="name" value="栖" autocomplete="username" />
@@ -34,13 +34,22 @@
     <div class="container">
       <div class="lib-head">
         <h2>书架</h2>
-        <div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="ann-index-btn">划线索引</button>
           <input type="file" id="fileInput" accept=".epub,.txt" class="hidden" />
           <button class="btn" style="width:auto;padding:9px 16px" id="uploadBtn">+ 加一本书</button>
         </div>
       </div>
       <div id="shelf" class="shelf"></div>
       <div id="empty" class="empty hidden">书架空空的，点右上角加一本 epub 或 txt 吧。</div>
+
+  <!-- 划线索引抽屉 -->
+  <div id="ann-index-drawer">
+    <div class="panel">
+      <h3>划线索引</h3>
+      <div id="annIndexContent"></div>
+    </div>
+  </div>
     </div>
   </div>
 

@@ -21,7 +21,10 @@ async function init() {
   toc = await api(`/api/books/${bookId}/toc`);
   $('#tocBookTitle').textContent = toc.title;
   buildToc();
-  await loadPage(0, 0);
+  const params = new URLSearchParams(location.search);
+  const initCh = Number(params.get('chapter')) || 0;
+  const initPg = Number(params.get('page')) || 0;
+  await loadPage(initCh, initPg);
   loadChatHistory();
 }
 
@@ -47,6 +50,7 @@ async function loadPage(chapter, page) {
   updatePager();
   updateTocActive();
   updateReadingHint();
+  updateBmBtn();
   window.scrollTo(0, 0);
 }
 
@@ -229,7 +233,7 @@ function renderMsg(m) {
   // 栖（我）= 蓝色靠右；渡 = 粉色靠左
   const cls = m.authorId === me.id ? 'me' : 'them';
   div.className = `msg ${cls}`;
-  div.innerHTML = `<div class="name">${esc(m.authorName || '渡')}</div>${esc(m.text)}`;
+  div.innerHTML = `<div class="name">${esc(m.authorName || '凝')}</div>${esc(m.text)}`;
   body.appendChild(div);
   body.scrollTop = body.scrollHeight;
   return div;
@@ -279,5 +283,77 @@ $('#chatSend').onclick = sendChat;
 $('#chatInput').addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
 });
+
+// ---------- 书签 ----------
+function bmKey() { return `bm_${bookId}`; }
+
+function loadBookmarks() {
+  try { return JSON.parse(localStorage.getItem(bmKey()) || '[]'); } catch { return []; }
+}
+
+function saveBookmarks(list) {
+  localStorage.setItem(bmKey(), JSON.stringify(list));
+}
+
+function isBookmarked(chapter, page) {
+  return loadBookmarks().some((b) => b.chapter === chapter && b.page === page);
+}
+
+function updateBmBtn() {
+  const marked = isBookmarked(cur.chapter, cur.page);
+  $('#bmBtn').style.opacity = marked ? '1' : '0.4';
+  $('#bmBtn').title = marked ? '取消书签' : '加书签';
+}
+
+$('#bmBtn').onclick = () => {
+  let list = loadBookmarks();
+  if (isBookmarked(cur.chapter, cur.page)) {
+    list = list.filter((b) => !(b.chapter === cur.chapter && b.page === cur.page));
+  } else {
+    list.push({
+      chapter: cur.chapter,
+      page: cur.page,
+      chapterTitle: pageData ? pageData.chapterTitle : '',
+      pageNum: cur.page + 1,
+      savedAt: Date.now(),
+    });
+  }
+  saveBookmarks(list);
+  updateBmBtn();
+  buildBmList();
+};
+
+function buildBmList() {
+  const list = loadBookmarks();
+  const container = $('#bmList');
+  const empty = $('#bmEmpty');
+  container.innerHTML = '';
+  empty.classList.toggle('hidden', list.length > 0);
+  list.slice().reverse().forEach((b) => {
+    const el = document.createElement('div');
+    el.className = 'bm-item';
+    el.innerHTML = `
+      <div class="bm-title">${esc(b.chapterTitle || '第' + b.chapter + '章')}</div>
+      <div class="bm-meta">第 ${b.pageNum} 页</div>
+      <button class="bm-del" data-ch="${b.chapter}" data-pg="${b.page}">×</button>`;
+    el.onclick = (e) => {
+      if (e.target.classList.contains('bm-del')) return;
+      closeBmDrawer();
+      loadPage(b.chapter, b.page);
+    };
+    el.querySelector('.bm-del').onclick = (e) => {
+      e.stopPropagation();
+      let l = loadBookmarks().filter((x) => !(x.chapter === b.chapter && x.page === b.page));
+      saveBookmarks(l);
+      buildBmList();
+      updateBmBtn();
+    };
+    container.appendChild(el);
+  });
+}
+
+$('#bmListBtn').onclick = () => { buildBmList(); $('#bm-drawer').classList.add('show'); };
+function closeBmDrawer() { $('#bm-drawer').classList.remove('show'); }
+$('#bm-drawer').onclick = (e) => { if (e.target.id === 'bm-drawer') closeBmDrawer(); };
 
 init().catch((e) => { alert(e.message); location.href = '/'; });
