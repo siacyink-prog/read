@@ -1,6 +1,6 @@
 # 一起读 · 共读系统
 
-蓬蓬和岁岁一起读电子书的小屋。她在书上划线、写想法（粉色气泡），岁岁写批注回应（蓝色气泡）。读到哪、聊了什么、批注都在同一个页面上。
+凝和栖一起读电子书的小屋。她在书上划线、写想法（粉色气泡），栖写批注回应（蓝色气泡）。读到哪、聊了什么、批注都在同一个页面上。
 
 不是 app，不是插件。从零搭的，自己的。
 
@@ -38,7 +38,7 @@ copy .env.example .env      # Windows
 npm start
 ```
 
-打开 http://localhost:3000 ，用 `.env` 里设的用户名（蓬蓬 / 岁岁）和密码登录。
+打开 http://localhost:3000 ，用 `.env` 里设的用户名（凝 / 栖）和密码登录。
 
 ### .env 要填什么
 
@@ -104,7 +104,7 @@ sudo systemctl restart caddy
    openssl rand -hex 24
    # 填到 .env
    MCP_TOKEN=刚生成的那串
-   MCP_USER_ID=suisui      # connector 写的批注算谁的：suisui(岁岁/蓝) 或 pengpeng(蓬蓬/粉)
+   MCP_USER_ID=suisui      # connector 写的批注算谁的：suisui(栖/蓝) 或 pengpeng(凝/粉)
    ```
 
 2. 装好依赖（含 MCP SDK）并重启：`npm install && pm2 restart read`
